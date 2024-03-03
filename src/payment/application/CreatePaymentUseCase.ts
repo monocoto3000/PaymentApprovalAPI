@@ -1,32 +1,25 @@
-import { Payment } from "../domain/Payment";
-import { PaymentRepository } from "../domain/PaymentRepository";
-import { AMQPMessageQueueService } from "../infrastructure/Adapters/AmqpQueueService";
+import { deliverPaymentMessage } from "../../shared/websocket/application/sendMessageUser";
+import { deliverPaymenttoQueue } from "../../shared/broker/application/deliverPayment";
+import { Payment } from "../domain/payment";
 
-export class CreatePaymentUseCase {
+export class CreateApprovedPayment {
   constructor(
-    private readonly PaymentRepository: PaymentRepository,
-    private readonly PaymentQueueService: AMQPMessageQueueService 
+    private readonly deliverPaymenttoQueue: deliverPaymenttoQueue,
+    private readonly deliverPaymenttoClient: deliverPaymentMessage
   ) {}
-
-  async run(
-    name: string,
-    concept: string,
-    total: number,
-  ): Promise<Payment | null> {
+  async run(completedPayment: Payment): Promise<Payment> {
     try {
-      const Payment = await this.PaymentRepository.createPayment(
-        name,
-        concept,
-        total
-      );
-      if (Payment) {
-        await this.PaymentQueueService.connect();
-        await this.PaymentQueueService.sendPayment('completedPayments', Payment);
-        await this.PaymentQueueService.close();
-      }
-      return Payment;
-    } catch (error) {
-      return null;
+      console.log(completedPayment);
+      const approvedPayment: Payment = {
+        name: completedPayment.name,
+        concept: completedPayment.concept,
+        total: completedPayment.total
+      };
+      await this.deliverPaymenttoQueue.run(approvedPayment);
+      await this.deliverPaymenttoClient.run(approvedPayment);
+      return approvedPayment;
+    } catch (error: any) {
+      throw new Error(error);
     }
   }
 }
