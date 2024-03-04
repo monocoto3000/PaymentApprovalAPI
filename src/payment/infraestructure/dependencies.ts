@@ -15,7 +15,4 @@ const sendDataService = new deliverDatatoClient(socketIo)
 
 //Create message
 const createPaymentService = new CreatePaymentUseCase(DeliverMessagetoQueue, sendDataService);
-export const createPaymentController = new CreatePaymentController(createPaymentService)
-
-
-
+export const createPaymentController = new CreatePaymentController(createPaymentService);

@@ -3,7 +3,6 @@ import cors from "cors";
 import paymentRouter from "./src/payment/infraestructure/paymentRouter";
 
 const app = express();
-const PORT = process.env.PORT || "8000";
 
 app.disable("x-powered-by");
 
@@ -16,5 +15,5 @@ app.use("*", (req : Request, res : Response) => {
 })
 
 app.listen(3001, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port 3001`);
 });
