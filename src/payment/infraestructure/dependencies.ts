@@ -7,7 +7,7 @@ import { Amqplib } from "../../shared/broker/infraestructure/Amqplib";
 
 // Ports
 const amqplLib = new Amqplib("amqp://52.6.228.180/");
-const socketIo = new SocketIO("http://localhost:4000");
+const socketIo = new SocketIO("http://54.144.234.209:4000");
 
 //Deliver data
 const DeliverMessagetoQueue = new deliverMessagetoQueue(amqplLib);

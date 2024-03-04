@@ -9,7 +9,7 @@ const CreatePaymentController_1 = require("./controllers/CreatePaymentController
 const Amqplib_1 = require("../../shared/broker/infraestructure/Amqplib");
 // Ports
 const amqplLib = new Amqplib_1.Amqplib("amqp://52.6.228.180/");
-const socketIo = new SocketIO_1.SocketIO("http://localhost:4000");
+const socketIo = new SocketIO_1.SocketIO("http://54.144.234.209:4000");
 //Deliver data
 const DeliverMessagetoQueue = new deliverMessage_1.deliverMessagetoQueue(amqplLib);
 const sendDataService = new deliverDatatoClientUseCase_1.deliverDatatoClient(socketIo);
