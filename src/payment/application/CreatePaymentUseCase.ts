@@ -1,25 +1,24 @@
-import { deliverPaymentMessage } from "../../shared/websocket/application/sendMessageUser";
-import { deliverPaymenttoQueue } from "../../shared/broker/application/deliverPayment";
-import { Payment } from "../domain/payment";
+import { deliverMessagetoQueue } from "../../shared/broker/application/deliverMessage";
+import { QueueName } from "../../shared/broker/domain/entities";
+import { deliverDatatoClient } from "../../shared/socket/application/deliverDatatoClientUseCase";
+import { EventsSocket } from "../../shared/socket/domain/entities/Events";
 
-export class CreateApprovedPayment {
+export class CreatePaymentUseCase {
   constructor(
-    private readonly deliverPaymenttoQueue: deliverPaymenttoQueue,
-    private readonly deliverPaymenttoClient: deliverPaymentMessage
+    private readonly deliverMessagetoQueue: deliverMessagetoQueue,
+    private readonly deliverMessagetoClient: deliverDatatoClient
   ) {}
-  async run(completedPayment: Payment): Promise<Payment> {
+  async run(payment: any): Promise<void> {
     try {
-      console.log(completedPayment);
-      const approvedPayment: Payment = {
-        name: completedPayment.name,
-        concept: completedPayment.concept,
-        total: completedPayment.total
+      const Approvedpayment = {
+        message: `Orden de ${payment?.name} bajo el concepto  ${payment?.concept} fue solicitada con un total de: ${payment?.total}`,
+        ...payment,
       };
-      await this.deliverPaymenttoQueue.run(approvedPayment);
-      await this.deliverPaymenttoClient.run(approvedPayment);
-      return approvedPayment;
-    } catch (error: any) {
-      throw new Error(error);
+      await this.deliverMessagetoQueue.run(Approvedpayment, QueueName.approved_payments);
+      await this.deliverMessagetoClient.run(EventsSocket.deliverData, Approvedpayment);
+    } catch (err: any) {
+      console.log(err);
+      throw new Error(err);
     }
   }
 }
