@@ -3,7 +3,7 @@ import { EventsSocket } from "../domain/entities/Events";
 import { SocketRepository } from "../domain/repositories/socketRepository";
 import { QueueContent } from "../../broker/domain/entities";
 
-export class SocketIOPort implements SocketRepository {
+export class SocketIO implements SocketRepository {
   constructor(private readonly url: string) {}
   async connect() {
     return new Promise<Socket>((resolve, reject) => {
